@@ -67,6 +67,11 @@ class FinanceHomeLivewire extends Component
     }
     // ===============================================
 
+    public function resetFilters()
+    {
+        $this->reset('search', 'filterType');
+    }
+
     public function render()
     {
         $userId = auth()->id() ?? 0;

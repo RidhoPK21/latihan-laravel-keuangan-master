@@ -12,41 +12,48 @@
     <link rel="icon" href="/logo.png" type="image/x-icon" />
 
     {{-- Judul --}}
-    <title>Laravel Todolist</title>
+    <title>Aplikasi Keuangan</title>
+
+    {{-- Fonts --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     {{-- Styles --}}
     @livewireStyles
     <link rel="stylesheet" href="/assets/vendor/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    {{-- Bootstrap Icons --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
-    {{-- SweetAlert2 CDN (Disarankan ditaruh di <head>) --}}
+    {{-- SweetAlert2 CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* PERUBAHAN: Warna latar belakang diubah agar card putih lebih menonjol */
+            background-color: #eef2f6; 
+        }
+    </style>
 </head>
 
-<body class="bg-light">
-    <div class="container-fluid">
+<body>
+    {{-- Konten dibungkus container-xl untuk max-width di desktop --}}
+    <div class="container-xl"> 
         @yield('content')
     </div>
 
     {{-- Scripts --}}
     <script src="/assets/vendor/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
     
-    {{-- @livewireScripts HARUS ADA SEBELUM SCRIPT KUSTOM YANG MENGGUNAKAN 'Livewire' --}}
     @livewireScripts
 
-    <!-- =============================================== -->
-    <!-- APEXCHARTS CDN                                  -->
-    <!-- =============================================== -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <!-- =============================================== -->
 
     <script>
         // Definisikan variabel chart di scope global
         let financeChart;
 
-        // ======================================================
-        // SEMUA LISTENER LIVEWIRE HARUS DI DALAM SINI
-        // Ini dijalankan setelah Livewire siap, tapi sebelum komponen memuat
-        // ======================================================
         document.addEventListener("livewire:initialized", () => {
             
             // Listener untuk menutup modal Bootstrap
@@ -95,7 +102,10 @@
             });
 
             // Listener Alert (Toast) Biasa (Struktur diperbaiki)
-            Livewire.on('showAlert', (data) => {
+            // Listener Alert (Toast) Biasa (Struktur diperbaiki)
+            Livewire.on('showAlert', (event) => { // Diubah dari (data) ke (event)
+                const data = event.data; // Ambil data dari 'event.data'
+
                 const Toast = Swal.mixin({
                     toast: true,
                     position: 'top-end',
@@ -109,25 +119,25 @@
                 });
 
                 Toast.fire({
-                    icon: data.icon, // Sudah benar (tanpa [0])
-                    title: data.message // Sudah benar (tanpa [0])
+                    icon: data.icon, // Sekarang ini akan berisi 'success'
+                    title: data.message // Sekarang ini akan berisi pesan
                 });
             });
 
             // Listener Alert Konfirmasi Hapus (Struktur diperbaiki)
             Livewire.on('showConfirm', (data) => {
                 Swal.fire({
-                    title: data.title, // Sudah benar (tanpa [0])
-                    text: data.text, // Sudah benar (tanpa [0])
-                    icon: data.icon, // Sudah benar (tanpa [0])
+                    title: data.title,
+                    text: data.text,
+                    icon: data.icon,
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: data.confirmButtonText || 'Ya, Lanjutkan!', // Sudah benar (tanpa [0])
+                    confirmButtonText: data.confirmButtonText || 'Ya, Lanjutkan!',
                     cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        Livewire.dispatch(data.method); // Sudah benar (tanpa [0])
+                        Livewire.dispatch(data.method);
                     }
                 });
             });
@@ -135,7 +145,7 @@
             // Listener untuk 'update-chart' dari Livewire (Struktur diperbaiki)
             Livewire.on('update-chart', (event) => {
                 if (financeChart) {
-                    const chartData = event.data; // Sudah benar (tanpa [0])
+                    const chartData = event.data;
 
                     if (chartData) {
                         const isDataEmpty = chartData.series.every(item => item === 0);
@@ -160,16 +170,13 @@
 
         }); // <- INI PENUTUP UNTUK 'livewire:initialized'
 
-        // ======================================================
-        // 2. INISIALISASI HALAMAN (DOM)
-        // ======================================================
-        
         document.addEventListener('DOMContentLoaded', function () {
             
             const chartOptions = {
                 chart: {
                     type: 'donut',
-                    height: 350
+                    height: 350,
+                    fontFamily: 'Inter, sans-serif' // Terapkan font di chart
                 },
                 series: [], // Dimulai kosong
                 labels: [], // Dimulai kosong
@@ -203,15 +210,11 @@
                 }
             };
 
-            // Inisialisasi chart saat halaman dimuat
             const chartElement = document.getElementById('finance-chart');
             if (chartElement) {
-                // 'financeChart' sekarang diisi,
-                // sehingga listener 'update-chart' di atas bisa menemukannya.
                 financeChart = new ApexCharts(chartElement, chartOptions);
                 financeChart.render();
                 
-                // "Handshake" - Beri tahu Livewire bahwa chart sudah siap
                 Livewire.dispatch('chart-ready-for-data');
             }
 
@@ -219,6 +222,4 @@
     </script>
     
 </body>
-
 </html>
-

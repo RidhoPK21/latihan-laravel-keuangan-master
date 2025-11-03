@@ -1,5 +1,4 @@
 <div>
-    <!-- Modern Header Card -->
     <div class="mt-3">
         <div class="card rounded-3 shadow-sm border-0 overflow-hidden">
             <div class="row g-0 align-items-center p-3 bg-white">
@@ -16,7 +15,7 @@
                 </div>
 
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="{{ route('auth.logout') }}" class="btn btn-outline-warning me-2">Keluar</a>
+                    <a href="{{ route('auth.logout') }}" class="btn btn-outline-danger me-2">Keluar</a>
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
                         <i class="bi bi-plus-lg me-1"></i> Tambah
                     </button>
@@ -24,8 +23,8 @@
             </div>
 
             <div class="card-body border-top p-3">
-                <div class="row g-2">
-                    <div class="col-md-6">
+                <div class="row g-2 align-items-center">
+                    <div class="col-md-5">
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
                             <input type="text" class="form-control border-start-0" placeholder="Cari judul atau deskripsi transaksi..."
@@ -41,17 +40,23 @@
                         </select>
                     </div>
 
-                    
+                    <div class="col-md-4 text-md-end">
+                        @if($search || $filterType != 'all')
+                            <button class="btn btn-outline-secondary" wire:click="resetFilters">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+                            </button>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Statistik / Grafik Card -->
     <div class="row my-4">
         <div class="col-12">
             <div class="card rounded-3 shadow-sm border-0">
-                <div class="card-header bg-white border-0 py-3 d-flex align-items-center justify-content-between">
+                {{-- PERUBAHAN: bg-white diubah menjadi bg-light --}}
+                <div class="card-header bg-light border-0 py-3 d-flex align-items-center justify-content-between">
                     <div>
                         <h6 class="mb-0 fw-semibold">Statistik Keuangan</h6>
                         <small class="text-muted">Grafik Pemasukan vs Pengeluaran berdasarkan filter saat ini</small>
@@ -69,9 +74,9 @@
         </div>
     </div>
 
-    <!-- Daftar Transaksi Card -->
     <div class="card rounded-3 shadow-sm border-0">
-        <div class="card-header bg-white border-0 py-3 d-flex align-items-center justify-content-between">
+         {{-- PERUBAHAN: bg-white diubah menjadi bg-light --}}
+        <div class="card-header bg-light border-0 py-3 d-flex align-items-center justify-content-between">
             <h5 class="mb-0">Daftar Transaksi</h5>
             <small class="text-muted">Menampilkan {{ $transactions->total() }} transaksi</small>
         </div>
@@ -87,7 +92,7 @@
                 </div>
             @else
                 <div class="table-responsive">
-                    <table class="table table-borderless align-middle mb-0">
+                    <table class="table table-borderless table-hover align-middle mb-0">
                         <thead class="table-light small text-muted">
                             <tr>
                                 <th style="width:56px">No</th>
@@ -139,8 +144,7 @@
         </div>
     </div>
 
-    <!-- Floating action button for small screens -->
-    <div class="position-fixed end-0 bottom-0 p-3" style="z-index:1050;">
+    <div class="position-fixed end-0 bottom-0 p-3 d-md-none" style="z-index:1050;">
         <button class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center" style="width:56px;height:56px;" data-bs-toggle="modal" data-bs-target="#addTransactionModal" aria-label="Tambah Transaksi">
             <i class="bi bi-plus-lg" style="font-size:20px"></i>
         </button>
