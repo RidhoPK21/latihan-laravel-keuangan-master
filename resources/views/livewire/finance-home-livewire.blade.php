@@ -1,130 +1,125 @@
 <div>
-    {{-- KARTU 1: Header, Selamat Datang, dan Kontrol Filter --}}
+    <!-- Modern Header Card -->
     <div class="mt-3">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-white border-0 py-3 d-flex">
-                <div class="flex-fill">
-                    <h3 class="mb-0">Hi, {{ $auth->name }}</h3>
+        <div class="card rounded-3 shadow-sm border-0 overflow-hidden">
+            <div class="row g-0 align-items-center p-3 bg-white">
+                <div class="col-md-8 d-flex align-items-center">
+                    <div class="me-3">
+                        <div class="avatar rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:56px;height:56px;font-weight:600;">
+                            {{ strtoupper(substr($auth->name,0,1)) }}
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="mb-0">Halo, <span class="fw-semibold">{{ $auth->name }}</span></h4>
+                        <small class="text-muted">Selamat datang kembali! Kelola transaksi keuangan Anda di sini.</small>
+                    </div>
                 </div>
-                <div>
-                    <a href="{{ route('auth.logout') }}" class="btn btn-warning">Keluar</a>
+
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="{{ route('auth.logout') }}" class="btn btn-outline-warning me-2">Keluar</a>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+                        <i class="bi bi-plus-lg me-1"></i> Tambah
+                    </button>
                 </div>
             </div>
-            <div class="card-body">
-                
-                {{-- BAGIAN BARU: PENCARIAN DAN FILTER --}}
-                <div class="row">
-                    {{-- Kolom Pencarian --}}
-                    <div class="col-md-6 mb-2 mb-md-0">
-                        <input type="text" class="form-control" placeholder="Cari Judul atau Deskripsi Transaksi..." 
-                               wire:model.live.debounce.300ms="search">
+
+            <div class="card-body border-top p-3">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control border-start-0" placeholder="Cari judul atau deskripsi transaksi..."
+                                   wire:model.live.debounce.300ms="search" />
+                        </div>
                     </div>
-                    {{-- Kolom Filter Tipe --}}
-                    <div class="col-md-3 mb-2 mb-md-0">
+
+                    <div class="col-md-3">
                         <select class="form-select" wire:model.live="filterType">
                             <option value="all">Semua Tipe</option>
                             <option value="income">Pemasukan</option>
                             <option value="expense">Pengeluaran</option>
                         </select>
                     </div>
-                    {{-- Tombol Tambah Transaksi --}}
-                    <div class="col-md-3 d-flex justify-content-end">
-                        <button class="btn btn-primary w-100" data-bs-toggle="modal"
-                                data-bs-target="#addTransactionModal">
-                            Tambah Transaksi
-                        </button>
-                    </div>
-                </div>
-                {{-- AKHIR BAGIAN BARU: PENCARIAN DAN FILTER --}}
 
+                    
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- =============================================== -->
-    <!-- BARU: Blok untuk Statistik dan Grafik           -->
-    <!-- =============================================== -->
+    <!-- Statistik / Grafik Card -->
     <div class="row my-4">
         <div class="col-12">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white border-0 py-3">
-                    <h5 class="mb-0">Statistik Keuangan</h5>
-                    <small class="text-muted">Grafik Pemasukan vs Pengeluaran berdasarkan filter Anda saat ini.</small>
+            <div class="card rounded-3 shadow-sm border-0">
+                <div class="card-header bg-white border-0 py-3 d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="mb-0 fw-semibold">Statistik Keuangan</h6>
+                        <small class="text-muted">Grafik Pemasukan vs Pengeluaran berdasarkan filter saat ini</small>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted">Periode: <strong>{{ $currentPeriod ?? 'Semua' }}</strong></small>
+                    </div>
                 </div>
                 <div class="card-body">
-                    {{-- 
-                      wire:ignore SANGAT PENTING. 
-                      Ini memberitahu Livewire untuk tidak menyentuh elemen ini 
-                      setelah dirender, sehingga ApexCharts dapat mengontrolnya.
-                    --}}
                     <div wire:ignore>
-                        <div id="finance-chart"></div>
+                        <div id="finance-chart" style="min-height:260px;"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- =============================================== -->
-    <!-- AKHIR BLOK BARU                                 -->
-    <!-- =============================================== -->
 
-    {{-- KARTU 2: Daftar Transaksi (Tabel) --}}
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-white border-0 py-3">
-            <h3 class="mb-0">Daftar Transaksi</h3>
+    <!-- Daftar Transaksi Card -->
+    <div class="card rounded-3 shadow-sm border-0">
+        <div class="card-header bg-white border-0 py-3 d-flex align-items-center justify-content-between">
+            <h5 class="mb-0">Daftar Transaksi</h5>
+            <small class="text-muted">Menampilkan {{ $transactions->total() }} transaksi</small>
         </div>
 
-        {{-- Menggunakan card-body hanya jika ada data, atau untuk pesan error --}}
-        <div class="card-body">
+        <div class="card-body p-0">
             @if ($transactions->isEmpty())
-                <div class="alert alert-info text-center mb-0">
-                    Tidak ada transaksi yang ditemukan untuk kriteria pencarian atau filter saat ini.
+                <div class="p-4 text-center">
+                    <div class="mb-2">
+                        <i class="bi bi-wallet2" style="font-size:28px;color:#6c757d;"></i>
+                    </div>
+                    <h6 class="mb-1 text-muted">Tidak ada transaksi</h6>
+                    <p class="small text-muted mb-0">Tidak ditemukan transaksi untuk kriteria pencarian atau filter saat ini.</p>
                 </div>
             @else
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle">
-                        <thead class="table-light">
+                    <table class="table table-borderless align-middle mb-0">
+                        <thead class="table-light small text-muted">
                             <tr>
-                                <th>No</th>
-                                <th>Tanggal</th>
+                                <th style="width:56px">No</th>
+                                <th style="min-width:140px">Tanggal</th>
                                 <th>Tipe</th>
-                                <th>Jumlah</th>
+                                <th class="text-end">Jumlah</th>
                                 <th>Deskripsi</th>
                                 <th class="text-end">Tindakan</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- Pagination dimulai dari halaman mana pun, bukan selalu 1 --}}
                             @foreach ($transactions as $key => $transaction)
-                                <tr>
-                                    <td>{{ $transactions->firstItem() + $loop->index }}</td>
-                                    <td>{{ $transaction->date->format('d F Y') }}</td>
+                                <tr class="border-top">
+                                    <td class="small text-muted">{{ $transactions->firstItem() + $loop->index }}</td>
+                                    <td class="fw-medium">{{ $transaction->date->format('d F Y') }}</td>
                                     <td>
                                         @if ($transaction->type == 'income')
-                                            <span class="badge bg-success">Pemasukan</span>
+                                            <span class="badge rounded-pill bg-light text-success border">Pemasukan</span>
                                         @else
-                                            <span class="badge bg-danger">Pengeluaran</span>
+                                            <span class="badge rounded-pill bg-light text-danger border">Pengeluaran</span>
                                         @endif
                                     </td>
-                                    <td>Rp {{ number_format($transaction->amount) }}</td>
-                                    <td>
-                                        <span class="d-inline-block text-truncate" style="max-width: 200px;" title="{{ $transaction->description }}">
+                                    <td class="text-end fw-semibold">Rp {{ number_format($transaction->amount,0,',','.') }}</td>
+                                    <td class="small">
+                                        <div class="text-truncate" style="max-width:320px;" title="{{ $transaction->description }}">
                                             {{ $transaction->description }}
-                                        </span>
+                                        </div>
                                     </td>
                                     <td class="text-end">
-                                        <a href="{{ route('app.transactions.detail', ['transaction_id' => $transaction->id]) }}"
-                                           class="btn btn-sm btn-info">
-                                           Detail
-                                        </a>
-                                        <button wire:click="prepareEditTransaction({{ $transaction->id }})"
-                                                class="btn btn-sm btn-warning">
-                                            Edit
-                                        </button>
-                                        <button wire:click="prepareDeleteTransaction({{ $transaction->id }})"
-                                                class="btn btn-sm btn-danger">
-                                            Hapus
-                                        </button>
+                                        <a href="{{ route('app.transactions.detail', ['transaction_id' => $transaction->id]) }}" class="btn btn-sm btn-outline-info me-1">Detail</a>
+                                        <button wire:click="prepareEditTransaction({{ $transaction->id }})" class="btn btn-sm btn-outline-warning me-1">Edit</button>
+                                        <button wire:click="prepareDeleteTransaction({{ $transaction->id }})" class="btn btn-sm btn-outline-danger">Hapus</button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -132,20 +127,26 @@
                     </table>
                 </div>
 
-                {{-- BAGIAN PAGINATION --}}
-                <div class="mt-3">
-                    {{ $transactions->links() }}
+                <div class="d-flex align-items-center justify-content-between p-3 border-top">
+                    <div>
+                        <small class="text-muted">Menampilkan <strong>{{ $transactions->firstItem() }}</strong> - <strong>{{ $transactions->lastItem() }}</strong> dari <strong>{{ $transactions->total() }}</strong></small>
+                    </div>
+                    <div>
+                        {{ $transactions->links() }}
+                    </div>
                 </div>
-                {{-- AKHIR PAGIAN BARU --}}
-
             @endif
         </div>
+    </div>
+
+    <!-- Floating action button for small screens -->
+    <div class="position-fixed end-0 bottom-0 p-3" style="z-index:1050;">
+        <button class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center" style="width:56px;height:56px;" data-bs-toggle="modal" data-bs-target="#addTransactionModal" aria-label="Tambah Transaksi">
+            <i class="bi bi-plus-lg" style="font-size:20px"></i>
+        </button>
     </div>
 
     {{-- Modals --}}
     @include('components.modals.transactions.add')
     @include('components.modals.transactions.edit')
-    {{-- Modal Delete tidak diperlukan jika menggunakan SweetAlert --}}
-    {{-- @include('components.modals.transactions.delete') --}}
 </div>
-
