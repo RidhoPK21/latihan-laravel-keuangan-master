@@ -103,26 +103,28 @@
 
             // Listener Alert (Toast) Biasa (Struktur diperbaiki)
             // Listener Alert (Toast) Biasa (Struktur diperbaiki)
-            Livewire.on('showAlert', (event) => { // Diubah dari (data) ke (event)
-                const data = event.data; // Ambil data dari 'event.data'
+           // Listener Alert (Toast) Biasa (Struktur diperbaiki)
+Livewire.on('showAlert', (event) => { 
+    // HAPUS BARIS "const data = event.data;"
+    // Properti 'icon' dan 'message' ada langsung di 'event'
 
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                });
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
 
-                Toast.fire({
-                    icon: data.icon, // Sekarang ini akan berisi 'success'
-                    title: data.message // Sekarang ini akan berisi pesan
-                });
-            });
+    Toast.fire({
+        icon: event.icon,     // <-- UBAH KE event.icon
+        title: event.message  // <-- UBAH KE event.message
+    });
+});
 
             // Listener Alert Konfirmasi Hapus (Struktur diperbaiki)
             Livewire.on('showConfirm', (data) => {
