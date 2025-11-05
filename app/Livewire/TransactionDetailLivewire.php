@@ -44,6 +44,11 @@ class TransactionDetailLivewire extends Component
      */
 // app/Livewire/TransactionDetailLivewire.php
 
+   // app/Livewire/TransactionDetailLivewire.php
+
+    /**
+     * Logika untuk Simpan Cover Transaksi
+     */
     public function saveCover()
     {
         $this->validate([
@@ -57,31 +62,33 @@ class TransactionDetailLivewire extends Component
                     Storage::disk('public')->delete($this->transaction->cover);
                 }
 
-                // ... (logika penyimpanan file Anda) ...
+                // =========================================================
+                // BAGIAN PENTING YANG HILANG SEBELUMNYA
+                // =========================================================
+                // Buat nama file baru dan simpan
+                $userId = $this->auth->id;
+                $dateNumber = now()->format('YmdHis');
+                $extension = $this->editCoverFile->getClientOriginalExtension();
+                $filename = $userId . '-' . $dateNumber . '.' . $extension;
+                // =========================================================
                 
                 $path = $this->editCoverFile->storeAs('covers', $filename, 'public');
 
                 $this->transaction->cover = $path;
                 $this->transaction->save();
 
-                // =========================================================
-                // TAMBAHKAN BARIS INI
-                // =========================================================
-                // Ini akan mengambil data terbaru dari database ke properti $this->transaction
+                // BARIS UNTUK REFRESH DATA (AGAR GAMBAR LANGSUNG BERUBAH)
                 $this->transaction->refresh();
-                // =========================================================
-
             }
 
             $this->reset(['editCoverFile']);
             $this->dispatch('closeModal', id: 'editCoverTransactionModal');
             
-            // PASTIKAN BARIS INI BENAR
             $this->dispatch('showAlert', icon: 'success', message: 'Bukti transaksi berhasil diubah.');
 
         } catch (\Exception $e) {
-            // PASTIKAN BARIS INI JUGA BENAR
-            $this->dispatch('showAlert', icon: 'error', message: 'Gagal mengubah bukti transaksi: ' . $e->getMessage());
+            // Ini akan menampilkan pesan error yang lebih jelas, misal "Undefined variable $filename"
+            $this->dispatch('showAlert', icon: 'error', message: 'Gagal: ' . $e->getMessage());
         }
     }
 }
