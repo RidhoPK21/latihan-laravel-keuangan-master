@@ -52,6 +52,90 @@
         </div>
     </div>
 
+    {{-- =============================================== --}}
+    {{-- BARU: Stat Cards (Total Pemasukan, dll.) --}}
+    {{-- =============================================== --}}
+    <div class="row g-4 my-4">
+        {{-- Total Pemasukan --}}
+        <div class="col-lg-4 col-md-6 col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-success-subtle text-success-emphasis">
+                                <i class="bi bi-arrow-down-short fs-4"></i>
+                            </span>
+                        </div>
+                        <div class="me-auto">
+                            <small class="text-muted d-block mb-1">Total Pemasukan</small>
+                            <h5 class="mb-0 fw-semibold">
+                                Rp {{ number_format($totalIncome, 0, ',', '.') }}
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Total Pengeluaran --}}
+        <div class="col-lg-4 col-md-6 col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-danger-subtle text-danger-emphasis">
+                                <i class="bi bi-arrow-up-short fs-4"></i>
+                            </span>
+                        </div>
+                        <div class="me-auto">
+                            <small class="text-muted d-block mb-1">Total Pengeluaran</small>
+                            <h5 class="mb-0 fw-semibold">
+                                Rp {{ number_format($totalExpense, 0, ',', '.') }}
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Saldo Saat Ini (Total Semuanya) --}}
+        <div class="col-lg-4 col-md-12 col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar flex-shrink-0 me-3">
+                            {{-- Tampilkan ikon berdasarkan saldo positif atau negatif --}}
+                            @if ($totalBalance >= 0)
+                                <span class="avatar-initial rounded bg-primary-subtle text-primary-emphasis">
+                                    <i class="bi bi-wallet2 fs-4"></i>
+                                </span>
+                            @else
+                                <span class="avatar-initial rounded bg-warning-subtle text-warning-emphasis">
+                                    <i class="bi bi-exclamation-triangle fs-4"></i>
+                                </span>
+                            @endif
+                        </div>
+                        <div class="me-auto">
+                            <small class="text-muted d-block mb-1">Total Saldo </small>
+                            <h5 class="mb-0 fw-semibold">
+                                {{-- Beri tanda minus jika saldo negatif --}}
+                                @if ($totalBalance < 0)
+                                    -Rp {{ number_format(abs($totalBalance), 0, ',', '.') }}
+                                @else
+                                    Rp {{ number_format($totalBalance, 0, ',', '.') }}
+                                @endif
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- =============================================== --}}
+    {{-- AKHIR DARI Stat Cards --}}
+    {{-- =============================================== --}}
+
+
     <div class="row my-4">
         <div class="col-12">
             <div class="card rounded-3 shadow-sm border-0">

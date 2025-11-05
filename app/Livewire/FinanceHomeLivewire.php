@@ -72,6 +72,8 @@ class FinanceHomeLivewire extends Component
         $this->reset('search', 'filterType');
     }
 
+    // Di file: app/Livewire/FinanceHomeLivewire.php
+
     public function render()
     {
         $userId = auth()->id() ?? 0;
@@ -93,7 +95,7 @@ class FinanceHomeLivewire extends Component
         }
 
         // ===============================================
-        // BARU: Logika Agregasi Data Grafik
+        // Logika Agregasi Data (Untuk Chart DAN Stat Cards)
         // ===============================================
         
         // Clone query agar perhitungan total sesuai filter
@@ -103,14 +105,17 @@ class FinanceHomeLivewire extends Component
         // Clone lagi dan reset 'type'
         $chartQuery = clone $query; 
         $totalExpense = (float) $chartQuery->where('type', 'expense')->sum('amount');
-        
+
+        // ==== BARU: Hitung Total Saldo ====
+        $totalBalance = $totalIncome - $totalExpense;
+
+        // Data untuk Chart
         $chartData = [
             'series' => [$totalIncome, $totalExpense],
             'labels' => ['Pemasukan', 'Pengeluaran'],
         ];
 
         // Kirim data ke JavaScript SETIAP render
-        // Kita kirim sebagai objek langsung (bukan array di dalam array)
         $this->dispatch('update-chart', data: $chartData);
         // ===============================================
 
@@ -119,8 +124,12 @@ class FinanceHomeLivewire extends Component
             ->orderBy('date', 'desc') 
             ->paginate(20);
 
+        // ==== BARU: Kirim total ke view ====
         $data = [
-            'transactions' => $transactions
+            'transactions' => $transactions,
+            'totalIncome' => $totalIncome,
+            'totalExpense' => $totalExpense,
+            'totalBalance' => $totalBalance, // Variabel baru dikirim
         ];
 
         return view('livewire.finance-home-livewire', $data);
