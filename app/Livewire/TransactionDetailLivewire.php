@@ -39,6 +39,9 @@ class TransactionDetailLivewire extends Component
     /**
      * Logika untuk Simpan Cover Transaksi
      */
+   /**
+     * Logika untuk Simpan Cover Transaksi
+     */
     public function saveCover()
     {
         $this->validate([
@@ -70,12 +73,16 @@ class TransactionDetailLivewire extends Component
             $this->reset(['editCoverFile']);
             $this->dispatch('closeModal', id: 'editCoverTransactionModal');
             
-            // NOTIFIKASI SUKSES (SweetAlert2 Toast)
-            $this->dispatch('showAlert', ['icon' => 'success', 'message' => 'Bukti transaksi berhasil diubah.']);
+            // =====================================================================
+            // PERBAIKAN DI SINI: Ubah dari array ke named parameters
+            // =====================================================================
+            $this->dispatch('showAlert', icon: 'success', message: 'Bukti transaksi berhasil diubah.');
 
         } catch (\Exception $e) {
-            // NOTIFIKASI GAGAL jika ada masalah database atau file system
-            $this->dispatch('showAlert', ['icon' => 'error', 'message' => 'Gagal mengubah bukti transaksi: ' . $e->getMessage()]);
+            // =====================================================================
+            // PERBAIKAN DI SINI: Ubah dari array ke named parameters
+            // =====================================================================
+            $this->dispatch('showAlert', icon: 'error', message: 'Gagal mengubah bukti transaksi: ' . $e->getMessage());
             // Catatan: Di produksi, jangan tampilkan $e->getMessage()
         }
     }
