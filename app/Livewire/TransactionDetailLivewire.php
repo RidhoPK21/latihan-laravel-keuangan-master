@@ -42,7 +42,9 @@ class TransactionDetailLivewire extends Component
    /**
      * Logika untuk Simpan Cover Transaksi
      */
-   public function saveCover()
+// app/Livewire/TransactionDetailLivewire.php
+
+    public function saveCover()
     {
         $this->validate([
             'editCoverFile' => 'required|image|max:2048', // Max 2MB
@@ -55,16 +57,20 @@ class TransactionDetailLivewire extends Component
                     Storage::disk('public')->delete($this->transaction->cover);
                 }
 
-                // Buat nama file baru dan simpan
-                $userId = $this->auth->id;
-                $dateNumber = now()->format('YmdHis');
-                $extension = $this->editCoverFile->getClientOriginalExtension();
-                $filename = $userId . '-' . $dateNumber . '.' . $extension;
+                // ... (logika penyimpanan file Anda) ...
                 
                 $path = $this->editCoverFile->storeAs('covers', $filename, 'public');
 
                 $this->transaction->cover = $path;
                 $this->transaction->save();
+
+                // =========================================================
+                // TAMBAHKAN BARIS INI
+                // =========================================================
+                // Ini akan mengambil data terbaru dari database ke properti $this->transaction
+                $this->transaction->refresh();
+                // =========================================================
+
             }
 
             $this->reset(['editCoverFile']);
