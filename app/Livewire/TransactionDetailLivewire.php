@@ -42,13 +42,12 @@ class TransactionDetailLivewire extends Component
    /**
      * Logika untuk Simpan Cover Transaksi
      */
-    public function saveCover()
+   public function saveCover()
     {
         $this->validate([
             'editCoverFile' => 'required|image|max:2048', // Max 2MB
         ]);
 
-        // Menggunakan try-catch untuk penanganan error yang lebih baik
         try {
             if ($this->editCoverFile) {
                 // Hapus cover lama jika ada
@@ -62,10 +61,8 @@ class TransactionDetailLivewire extends Component
                 $extension = $this->editCoverFile->getClientOriginalExtension();
                 $filename = $userId . '-' . $dateNumber . '.' . $extension;
                 
-                // Simpan file ke storage/app/public/covers
                 $path = $this->editCoverFile->storeAs('covers', $filename, 'public');
 
-                // Simpan path baru ke database
                 $this->transaction->cover = $path;
                 $this->transaction->save();
             }
@@ -73,17 +70,12 @@ class TransactionDetailLivewire extends Component
             $this->reset(['editCoverFile']);
             $this->dispatch('closeModal', id: 'editCoverTransactionModal');
             
-            // =====================================================================
-            // PERBAIKAN DI SINI: Ubah dari array ke named parameters
-            // =====================================================================
+            // PASTIKAN BARIS INI BENAR
             $this->dispatch('showAlert', icon: 'success', message: 'Bukti transaksi berhasil diubah.');
 
         } catch (\Exception $e) {
-            // =====================================================================
-            // PERBAIKAN DI SINI: Ubah dari array ke named parameters
-            // =====================================================================
+            // PASTIKAN BARIS INI JUGA BENAR
             $this->dispatch('showAlert', icon: 'error', message: 'Gagal mengubah bukti transaksi: ' . $e->getMessage());
-            // Catatan: Di produksi, jangan tampilkan $e->getMessage()
         }
     }
 }
